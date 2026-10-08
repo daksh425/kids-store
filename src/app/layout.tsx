@@ -8,12 +8,15 @@ const fredoka = Fredoka({ variable: "--font-fredoka", subsets: ["latin"], weight
 const nunito = Nunito({ variable: "--font-nunito", subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  // Absolute URLs for social previews and canonical links.
+  metadataBase: new URL(process.env.APP_URL || "http://localhost:3100"),
   title: { default: `${STORE_NAME}: printable learning fun for kids`, template: `%s · ${STORE_NAME}` },
   description:
     "Printable kids e-books, colouring books, activity books, worksheets and learning packs. Instant download, secure payment, made for ages 2–12.",
+  openGraph: { siteName: STORE_NAME, type: "website", locale: "en_IN" },
 };
 
-export const viewport: Viewport = { themeColor: "#5B4BDB" };
+export const viewport: Viewport = { themeColor: "#D02B65" };
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 

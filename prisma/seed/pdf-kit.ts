@@ -18,7 +18,7 @@ const GREY = hex("#8C8CA1");
 const TRACE = hex("#C9C9D6");
 const LINE = hex("#D9D4E8");
 const WHITE = rgb(1, 1, 1);
-const PALETTE = ["#5B4BDB", "#4DA3FF", "#FFD95A", "#72D6B1", "#FF7B6B"].map(hex);
+const PALETTE = ["#D02B65", "#4DA3FF", "#FFD95A", "#72D6B1", "#FF7B6B"].map(hex);
 
 export type Kit = {
   doc: PDFDocument;

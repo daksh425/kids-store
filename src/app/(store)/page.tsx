@@ -24,7 +24,7 @@ function SectionHeading({ eyebrow, title, href, linkLabel }: { eyebrow?: string;
 }
 
 const TRUST = [
-  { icon: Zap, label: "Instant Download", color: "#5B4BDB" },
+  { icon: Zap, label: "Instant Download", color: "#D02B65" },
   { icon: Printer, label: "Printable Fun", color: "#4DA3FF" },
   { icon: ShieldCheck, label: "Secure Payment", color: "#1D7A58" },
   { icon: Lightbulb, label: "Learning Focused", color: "#B8392A" },

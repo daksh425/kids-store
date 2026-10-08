@@ -1,4 +1,4 @@
-# Little Sparks: kids digital products store
+# Printora: digital printables store (starting with kids)
 
 An MVP of the "Kids Digital Products Platform" plan: a store for printable kids e-books, colouring books, activity books,
 worksheets and learning packs, with Razorpay payments, secure downloads and an admin dashboard.

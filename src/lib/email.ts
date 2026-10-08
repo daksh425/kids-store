@@ -49,7 +49,7 @@ function layout(title: string, body: string) {
   return `<!doctype html><html><body style="margin:0;background:#FFF9F0;font-family:Arial,Helvetica,sans-serif;color:#25253A">
 <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
 <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden">
-<tr><td style="background:#5B4BDB;padding:20px 28px;color:#ffffff;font-size:20px;font-weight:bold">${escape(STORE_NAME)}</td></tr>
+<tr><td style="background:#D02B65;padding:20px 28px;color:#ffffff;font-size:20px;font-weight:bold">${escape(STORE_NAME)}</td></tr>
 <tr><td style="padding:28px">
 <h1 style="margin:0 0 16px;font-size:22px">${escape(title)}</h1>
 ${body}
@@ -71,7 +71,7 @@ export async function sendOrderConfirmation(orderId: string) {
       (d) => `<tr>
 <td style="padding:10px 0;border-bottom:1px solid #EEE">${escape(d.product.title)}</td>
 <td style="padding:10px 0;border-bottom:1px solid #EEE;text-align:right">
-<a href="${base}/download/${d.downloadToken}" style="background:#5B4BDB;color:#fff;text-decoration:none;padding:8px 14px;border-radius:8px;font-size:14px">Download</a>
+<a href="${base}/download/${d.downloadToken}" style="background:#D02B65;color:#fff;text-decoration:none;padding:8px 14px;border-radius:8px;font-size:14px">Download</a>
 </td></tr>`,
     )
     .join("");
@@ -84,7 +84,7 @@ export async function sendOrderConfirmation(orderId: string) {
 <table width="100%" cellpadding="0" cellspacing="0">${rows}</table>
 <p style="margin:16px 0 0;font-size:13px;color:#6B6B80">Each link works for ${limit} downloads${
     expires ? ` until ${formatDate(expires)}` : ""
-  }. You can also find everything on <a href="${base}/order/${order.id}" style="color:#5B4BDB">your order page</a>.</p>`;
+  }. You can also find everything on <a href="${base}/order/${order.id}" style="color:#D02B65">your order page</a>.</p>`;
 
   await sendEmail({
     to: order.user.email,
@@ -95,7 +95,7 @@ export async function sendOrderConfirmation(orderId: string) {
 
 export async function sendLoginLink(to: string, link: string) {
   const body = `<p style="margin:0 0 20px">Use the button below to see your orders and downloads. The link works once and expires in 30 minutes.</p>
-<p><a href="${link}" style="background:#5B4BDB;color:#fff;text-decoration:none;padding:12px 20px;border-radius:10px;font-weight:bold">View my orders</a></p>
+<p><a href="${link}" style="background:#D02B65;color:#fff;text-decoration:none;padding:12px 20px;border-radius:10px;font-weight:bold">View my orders</a></p>
 <p style="margin:20px 0 0;font-size:13px;color:#6B6B80">If you didn't ask for this, you can ignore this email.</p>`;
   await sendEmail({ to, subject: `Your ${STORE_NAME} sign-in link`, html: layout("Sign in to see your orders", body) });
 }

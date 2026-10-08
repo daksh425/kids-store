@@ -107,7 +107,7 @@ export function CheckoutView({ buyId, mode }: { buyId: string | null; mode: "raz
       description: r.description,
       order_id: r.razorpayOrderId,
       prefill: r.prefill,
-      theme: { color: "#5B4BDB" },
+      theme: { color: "#D02B65" },
       handler: (resp: RazorpaySuccess) => verify(r.orderId, resp),
       modal: { ondismiss: () => setBusy(false) },
     });

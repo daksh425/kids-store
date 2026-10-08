@@ -7,7 +7,7 @@ import { Price } from "@/components/price";
 import { ProductGrid } from "@/components/product-card";
 import { Stars } from "@/components/stars";
 import { ageLabel, getCategory } from "@/lib/catalog";
-import { downloadPolicy } from "@/lib/config";
+import { appUrl, downloadPolicy } from "@/lib/config";
 import { findPurchase } from "@/lib/customer";
 import { formatBytes, formatDate } from "@/lib/format";
 import { thumbnailUrl } from "@/lib/media";
@@ -53,6 +53,22 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
 
   return (
     <div className="container-page py-8">
+      <script
+        type="application/ld+json"
+        // Escape "<" so product text can never close the script tag.
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: product.title,
+            description: product.shortDescription || product.description,
+            ...(thumb ? { image: `${appUrl()}${thumb}` } : {}),
+            category: category?.name,
+            offers: { "@type": "Offer", price, priceCurrency: "INR", availability: "https://schema.org/InStock" },
+            ...(count > 0 && rating ? { aggregateRating: { "@type": "AggregateRating", ratingValue: rating.toFixed(1), reviewCount: count } } : {}),
+          }).replace(/</g, "\\u003c"),
+        }}
+      />
       <ViewTracker productId={product.id} title={product.title} price={price} />
       <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1 text-sm font-bold text-muted">
         <Link href="/kids" className="hover:text-primary">

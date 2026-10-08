@@ -3,10 +3,10 @@
 /* Brand system from the project brief: playful colour for buttons, badges and
    illustrations; cream and white carry the page so parents still read "trustworthy". */
 @theme inline {
-  --color-primary: #5b4bdb;
-  --color-primary-dark: #4535c2;
-  --color-primary-50: #eeebff;
-  --color-primary-100: #ddd8ff;
+  --color-primary: #d02b65;
+  --color-primary-dark: #a91f50;
+  --color-primary-50: #fdebf1;
+  --color-primary-100: #fad1df;
   --color-secondary: #4da3ff;
   --color-secondary-50: #e6f2ff;
   --color-sunny: #ffd95a;
@@ -27,7 +27,7 @@
   --font-display: var(--font-fredoka), var(--font-nunito), ui-rounded, system-ui, sans-serif;
 
   --shadow-card: 0 1px 2px rgb(37 37 58 / 0.04), 0 8px 24px -12px rgb(37 37 58 / 0.18);
-  --shadow-lift: 0 2px 4px rgb(37 37 58 / 0.05), 0 18px 40px -16px rgb(91 75 219 / 0.35);
+  --shadow-lift: 0 2px 4px rgb(37 37 58 / 0.05), 0 18px 40px -16px rgb(208 43 101 / 0.32);
 }
 
 html {
@@ -55,7 +55,7 @@ body {
     @apply px-3.5 py-1.5 text-sm;
   }
   .btn-primary {
-    @apply bg-primary text-white shadow-[0_5px_0_-1px_#3a2ba6] hover:bg-primary-dark active:translate-y-0.5 active:shadow-[0_2px_0_-1px_#3a2ba6];
+    @apply bg-primary text-white shadow-[0_5px_0_-1px_#86173f] hover:bg-primary-dark active:translate-y-0.5 active:shadow-[0_2px_0_-1px_#86173f];
   }
   .btn-sunny {
     @apply bg-sunny text-navy shadow-[0_5px_0_-1px_#e0b42c] hover:brightness-105 active:translate-y-0.5 active:shadow-[0_2px_0_-1px_#e0b42c];

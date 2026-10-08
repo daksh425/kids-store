@@ -16,7 +16,7 @@ export function CategoryIcon({ slug, ...props }: { slug: string } & LucideProps)
 export function LogoMark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 40 40" className={className} aria-hidden="true">
-      <circle cx="20" cy="20" r="20" fill="#5B4BDB" />
+      <circle cx="20" cy="20" r="20" fill="#D02B65" />
       <path
         d="M20 7.5l3.3 8.1 8.7.6-6.7 5.6 2.1 8.5L20 25.6l-7.4 4.7 2.1-8.5L8 16.2l8.7-.6z"
         fill="#FFD95A"

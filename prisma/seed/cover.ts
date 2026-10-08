@@ -1,7 +1,7 @@
 // SVG cover thumbnails for seeded products (600×800, 3:4).
 
 const NAVY = "#25253A";
-const CONFETTI = ["#5B4BDB", "#4DA3FF", "#FFD95A", "#72D6B1", "#FF7B6B"];
+const CONFETTI = ["#D02B65", "#4DA3FF", "#FFD95A", "#72D6B1", "#FF7B6B"];
 
 function escapeXml(s: string) {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[c]!);

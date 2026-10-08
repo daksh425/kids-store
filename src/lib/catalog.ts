@@ -83,4 +83,4 @@ export function isCategorySlug(slug: string): slug is CategorySlug {
   return CATEGORIES.some((c) => c.slug === slug);
 }
 
-export const STORE_NAME = process.env.NEXT_PUBLIC_STORE_NAME || "Little Sparks";
+export const STORE_NAME = process.env.NEXT_PUBLIC_STORE_NAME || "Printora";
