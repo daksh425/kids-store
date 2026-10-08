@@ -71,7 +71,7 @@ export async function sendOrderConfirmation(orderId: string) {
       (d) => `<tr>
 <td style="padding:10px 0;border-bottom:1px solid #EEE">${escape(d.product.title)}</td>
 <td style="padding:10px 0;border-bottom:1px solid #EEE;text-align:right">
-<a href="${base}/download/${d.downloadToken}" style="background:#D02B65;color:#fff;text-decoration:none;padding:8px 14px;border-radius:8px;font-size:14px">Download</a>
+${d.product.file?.toLowerCase().endsWith(".pdf") ? `<a href="${base}/read/${d.downloadToken}" style="background:#D02B65;color:#fff;text-decoration:none;padding:8px 14px;border-radius:8px;font-size:14px">Open book</a> ` : ""}<a href="${base}/download/${d.downloadToken}" style="background:#ffffff;color:#D02B65;border:2px solid #D02B65;text-decoration:none;padding:6px 12px;border-radius:8px;font-size:14px">Download</a>
 </td></tr>`,
     )
     .join("");
@@ -84,7 +84,7 @@ export async function sendOrderConfirmation(orderId: string) {
 <table width="100%" cellpadding="0" cellspacing="0">${rows}</table>
 <p style="margin:16px 0 0;font-size:13px;color:#6B6B80">Each link works for ${limit} downloads${
     expires ? ` until ${formatDate(expires)}` : ""
-  }. You can also find everything on <a href="${base}/order/${order.id}" style="color:#D02B65">your order page</a>.</p>`;
+  }. Downloads don't count when you read online. You can also find everything on <a href="${base}/order/${order.id}" style="color:#D02B65">your order page</a>.</p>`;
 
   await sendEmail({
     to: order.user.email,

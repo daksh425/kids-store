@@ -106,3 +106,20 @@ body {
     @apply font-bold text-primary underline;
   }
 }
+
+/* Pages inside the flip-book reader (page-flip HTML mode) */
+.flip-page {
+  background: #fff;
+  overflow: hidden;
+}
+.flip-page img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+}
+.flip-page.--hard {
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
+}

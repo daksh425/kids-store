@@ -1,10 +1,11 @@
-import { CircleAlert, Clock, Download, Mail, PartyPopper, Star } from "lucide-react";
+import { BookOpen, CircleAlert, Clock, Download, Mail, PartyPopper, Star } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCategory } from "@/lib/catalog";
 import { canSeeOrder, getViewer } from "@/lib/customer";
 import { db } from "@/lib/db";
+import { isReadable } from "@/lib/downloads";
 import { formatDate, formatDateTime, inr, orderLabel } from "@/lib/format";
 import { thumbnailUrl } from "@/lib/media";
 
@@ -102,17 +103,26 @@ export default async function OrderPage({ params, searchParams }: PageProps<"/or
                   <div className="min-w-0">
                     <p className="font-display text-lg font-semibold">{d.product.title}</p>
                     <p className="text-sm text-muted">
-                      {expired ? "Link expired" : `${left} of ${d.maxDownloads} downloads left · until ${formatDate(d.expiresAt)}`}
+                      {expired ? "Link expired" : `Read online any time until ${formatDate(d.expiresAt)} · ${left} of ${d.maxDownloads} downloads left`}
                     </p>
                     <Link href={`/product/${d.product.slug}#reviews`} className="mt-1 inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline">
                       <Star size={14} /> Leave a review
                     </Link>
                   </div>
                 </div>
-                {usable ? (
-                  <a href={`/download/${d.downloadToken}`} className="btn btn-primary shrink-0">
-                    <Download size={18} /> Download PDF
-                  </a>
+                {!expired ? (
+                  <div className="flex shrink-0 flex-wrap gap-2">
+                    {isReadable(d.product.file) ? (
+                      <Link href={`/read/${d.downloadToken}`} className="btn btn-primary flex-1">
+                        <BookOpen size={18} /> Open book
+                      </Link>
+                    ) : null}
+                    {usable ? (
+                      <a href={`/download/${d.downloadToken}`} className="btn btn-outline flex-1">
+                        <Download size={18} /> Download PDF
+                      </a>
+                    ) : null}
+                  </div>
                 ) : (
                   <Link href="/contact" className="btn btn-outline shrink-0">
                     Ask us to renew
