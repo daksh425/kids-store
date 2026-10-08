@@ -1,26 +1,108 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Brand system from the project brief: playful colour for buttons, badges and
+   illustrations; cream and white carry the page so parents still read "trustworthy". */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: #5b4bdb;
+  --color-primary-dark: #4535c2;
+  --color-primary-50: #eeebff;
+  --color-primary-100: #ddd8ff;
+  --color-secondary: #4da3ff;
+  --color-secondary-50: #e6f2ff;
+  --color-sunny: #ffd95a;
+  --color-sunny-50: #fff6d6;
+  --color-mint: #72d6b1;
+  --color-mint-50: #e3f7ef;
+  --color-mint-ink: #1d7a58;
+  --color-coral: #ff7b6b;
+  --color-coral-50: #ffece9;
+  --color-coral-ink: #b8392a;
+  --color-cream: #fff9f0;
+  --color-cream-dark: #f6efe2;
+  --color-navy: #25253a;
+  --color-muted: #5f5f78;
+  --color-line: #ebe4d6;
+
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fredoka), var(--font-nunito), ui-rounded, system-ui, sans-serif;
+
+  --shadow-card: 0 1px 2px rgb(37 37 58 / 0.04), 0 8px 24px -12px rgb(37 37 58 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(37 37 58 / 0.05), 0 18px 40px -16px rgb(91 75 219 / 0.35);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-cream);
+  color: var(--color-navy);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 font-bold transition duration-150 select-none disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-lg {
+    @apply px-7 py-3.5 text-lg;
+  }
+  .btn-sm {
+    @apply px-3.5 py-1.5 text-sm;
+  }
+  .btn-primary {
+    @apply bg-primary text-white shadow-[0_5px_0_-1px_#3a2ba6] hover:bg-primary-dark active:translate-y-0.5 active:shadow-[0_2px_0_-1px_#3a2ba6];
+  }
+  .btn-sunny {
+    @apply bg-sunny text-navy shadow-[0_5px_0_-1px_#e0b42c] hover:brightness-105 active:translate-y-0.5 active:shadow-[0_2px_0_-1px_#e0b42c];
+  }
+  .btn-outline {
+    @apply border-2 border-navy/15 bg-white text-navy hover:border-primary hover:text-primary;
+  }
+  .btn-ghost {
+    @apply text-navy hover:bg-navy/5;
+  }
+  .btn-danger {
+    @apply bg-coral-ink text-white hover:brightness-110;
+  }
+
+  .card {
+    @apply rounded-3xl border border-line bg-white shadow-card;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-bold;
+  }
+
+  .field {
+    @apply block w-full rounded-2xl border-2 border-line bg-white px-4 py-2.5 text-navy placeholder:text-muted/60 focus:border-primary focus:outline-none;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-bold text-navy;
+  }
+
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+
+  .prose-simple h2 {
+    @apply mt-8 mb-2 font-display text-xl font-semibold;
+  }
+  .prose-simple p,
+  .prose-simple li {
+    @apply leading-relaxed text-muted;
+  }
+  .prose-simple p + p {
+    @apply mt-3;
+  }
+  .prose-simple ul {
+    @apply list-disc space-y-1 pl-5;
+  }
+  .prose-simple a {
+    @apply font-bold text-primary underline;
+  }
 }

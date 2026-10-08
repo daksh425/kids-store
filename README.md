@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Little Sparks: kids digital products store
 
-## Getting Started
+An MVP of the "Kids Digital Products Platform" plan: a store for printable kids e-books, colouring books, activity books,
+worksheets and learning packs, with Razorpay payments, secure downloads and an admin dashboard.
 
-First, run the development server:
+Stack: Next.js 16 (App Router) · Tailwind CSS 4 · PostgreSQL + Prisma 7 · Razorpay · Nodemailer.
+
+## Run it locally
+
+Needs Node 20+ and PostgreSQL (this machine uses Homebrew Postgres on port 5433).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env        # then edit DATABASE_URL, ADMIN_PASSWORD, SESSION_SECRET
+createdb kids_store         # or any name that matches DATABASE_URL
+npm run setup               # applies migrations and seeds 23 sample products with real PDFs
+npm run dev                 # http://localhost:3100
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Store: http://localhost:3100
+- Admin: http://localhost:3100/admin (password is `ADMIN_PASSWORD` in `.env`)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`npm run db:reset` wipes the database (orders included) and re-seeds. `npm run db:studio` opens a table browser.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Payments (Razorpay)
 
-## Learn More
+With no keys in `.env`, checkout runs in **demo mode**: a simulated payment screen that goes through the same
+server-side signature check as a real payment. Demo mode is impossible in a production build; without keys a
+production build refuses paid orders.
 
-To learn more about Next.js, take a look at the following resources:
+To use real Razorpay **Test Mode**:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Razorpay Dashboard → switch to Test Mode → Account & Settings → API Keys → Generate key.
+2. Put them in `.env` as `RAZORPAY_KEY_ID` (starts `rzp_test_`) and `RAZORPAY_KEY_SECRET`, then restart `npm run dev`.
+3. Pay with Razorpay's test cards or test UPI ID from their docs.
+4. Optional, once deployed on a public URL: add a webhook to `https://<your-domain>/api/razorpay/webhook` for
+   `payment.captured` and `order.paid`, and put its secret in `RAZORPAY_WEBHOOK_SECRET`. This marks orders paid even
+   if the customer closes the tab before the browser reports back.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The key secret is only read in `src/lib/razorpay.ts`, which is server-only. An order becomes PAID only after the
+HMAC signature check passes (`/api/checkout/verify` or the webhook).
 
-## Deploy on Vercel
+## How the flow works
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Visitor → home → category → product page → Buy now / Add to cart.
+2. Checkout collects name, email, phone. The server re-prices the cart from the database (never trusts the browser),
+   applies any coupon, creates the order and a Razorpay order.
+3. Razorpay Checkout opens; on success the server verifies the signature, marks the order PAID and issues one download
+   token per product.
+4. The order page shows Download buttons; the confirmation email has the same links.
+5. `/download/<token>` is the only way files leave the server: the token must belong to a paid order, be unexpired and
+   have downloads left (`DOWNLOAD_LIMIT`, `DOWNLOAD_EXPIRY_DAYS`). Files live in `storage/`, never in `public/`.
+6. Customers see past orders under **My orders**: orders placed in that browser show automatically; on another device
+   they request a one-time email sign-in link.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Free resources (price ₹0) use the same checkout, minus payment, so every freebie builds your email list.
+
+## Admin
+
+Dashboard (sales, 14-day revenue, funnel from product views to downloads, top products) · Products (add/edit, PDF and
+cover upload, category, age, price, sale price, status) · Orders (search, payment details, resend email) · Customers
+(order history) · Downloads (limits, activity log, reset or reissue a link) · Coupons (percent or flat, minimum order,
+max uses, expiry, enable/disable) · Emails (everything sent, or saved when SMTP isn't configured) · Messages (contact
+form).
+
+## Email
+
+Without `SMTP_HOST`, emails aren't sent; they're saved and shown in Admin → Emails, and the "My orders" sign-in link is
+shown on screen in development. Fill in the `SMTP_*` values (any provider, e.g. Resend, Brevo, Amazon SES, Gmail app
+password) to deliver them.
+
+## Before going live
+
+- Replace the seeded sample products, covers and PDFs with your own (Admin → Products).
+- Have the Terms, Privacy and Refund pages reviewed; they're starting templates.
+- Set a strong `ADMIN_PASSWORD` and `SESSION_SECRET`, set `APP_URL` to your domain, add live Razorpay keys only after
+  testing and completing Razorpay onboarding.
+- `storage/` holds the product files: back it up, or move files to object storage (S3, R2) when you deploy to a host
+  without a persistent disk.
+
+## Project layout
+
+```
+prisma/schema.prisma        database tables (users, products, orders, order_items, downloads, coupons, events…)
+prisma/seed.ts, seed/       sample catalogue + generators for the sample PDFs and covers
+src/app/(store)/            storefront pages
+src/app/admin/              admin dashboard (login in (auth), everything else in (panel))
+src/app/api/                checkout, verify, webhook, cart quote, analytics
+src/app/download/[token]    secure file delivery
+src/lib/                    orders, razorpay, sessions, email, storage, catalogue
+```

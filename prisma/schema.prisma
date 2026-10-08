@@ -1,0 +1,224 @@
+// Store database. Money is stored as whole rupees (Int); Razorpay is sent paise.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String       @id @default(cuid())
+  name        String
+  email       String       @unique
+  phone       String?
+  createdAt   DateTime     @default(now()) @map("created_at")
+  orders      Order[]
+  reviews     Review[]
+  loginTokens LoginToken[]
+
+  @@map("users")
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Product {
+  id               String        @id @default(cuid())
+  title            String
+  slug             String        @unique
+  shortDescription String        @default("") @map("short_description")
+  description      String
+  // Category slug from src/lib/catalog.ts
+  category         String
+  // Age group slug from src/lib/catalog.ts
+  ageGroup         String        @map("age_group")
+  price            Int
+  discountPrice    Int?          @map("discount_price")
+  // File names inside storage/thumbnails and storage/files. Never public URLs.
+  thumbnail        String?
+  file             String?
+  fileName         String?       @map("file_name")
+  fileSize         Int?          @map("file_size")
+  pages            Int?
+  format           String        @default("PDF")
+  includes         String[]      @default([])
+  featured         Boolean       @default(false)
+  status           ProductStatus @default(DRAFT)
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+  orderItems       OrderItem[]
+  downloads        Download[]
+  reviews          Review[]
+  events           Event[]
+
+  @@index([status, category])
+  @@map("products")
+}
+
+enum OrderStatus {
+  CREATED
+  PAID
+  FAILED
+}
+
+model Order {
+  id                String      @id @default(cuid())
+  // Human-friendly number shown to customers, e.g. #1001
+  number            Int         @unique @default(autoincrement())
+  userId            String      @map("user_id")
+  user              User        @relation(fields: [userId], references: [id])
+  razorpayOrderId   String?     @unique @map("razorpay_order_id")
+  razorpayPaymentId String?     @map("razorpay_payment_id")
+  subtotal          Int
+  discount          Int         @default(0)
+  amount            Int
+  couponId          String?     @map("coupon_id")
+  coupon            Coupon?     @relation(fields: [couponId], references: [id])
+  couponCode        String?     @map("coupon_code")
+  status            OrderStatus @default(CREATED)
+  // razorpay | demo | free
+  paymentMethod     String?     @map("payment_method")
+  failureReason     String?     @map("failure_reason")
+  paidAt            DateTime?   @map("paid_at")
+  createdAt         DateTime    @default(now()) @map("created_at")
+  items             OrderItem[]
+  downloads         Download[]
+
+  @@index([status, createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String  @map("order_id")
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+  // Snapshot at purchase time so later product edits don't rewrite history
+  title     String
+  price     Int
+
+  @@map("order_items")
+}
+
+model Download {
+  id               String        @id @default(cuid())
+  orderId          String        @map("order_id")
+  order            Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId        String        @map("product_id")
+  product          Product       @relation(fields: [productId], references: [id])
+  downloadToken    String        @unique @map("download_token")
+  downloadCount    Int           @default(0) @map("download_count")
+  maxDownloads     Int           @map("max_downloads")
+  expiresAt        DateTime      @map("expires_at")
+  lastDownloadedAt DateTime?     @map("last_downloaded_at")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  logs             DownloadLog[]
+
+  @@unique([orderId, productId])
+  @@map("downloads")
+}
+
+model DownloadLog {
+  id         String   @id @default(cuid())
+  downloadId String   @map("download_id")
+  download   Download @relation(fields: [downloadId], references: [id], onDelete: Cascade)
+  ip         String?
+  userAgent  String?  @map("user_agent")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("download_logs")
+}
+
+enum CouponType {
+  PERCENT
+  FLAT
+}
+
+model Coupon {
+  id        String     @id @default(cuid())
+  code      String     @unique
+  type      CouponType
+  // Percent (1-100) or flat rupees
+  value     Int
+  minOrder  Int        @default(0) @map("min_order")
+  maxUses   Int?       @map("max_uses")
+  usedCount Int        @default(0) @map("used_count")
+  active    Boolean    @default(true)
+  expiresAt DateTime?  @map("expires_at")
+  createdAt DateTime   @default(now()) @map("created_at")
+  orders    Order[]
+
+  @@map("coupons")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  productId String   @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String?  @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id])
+  name      String
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([productId, userId])
+  @@map("reviews")
+}
+
+// Funnel analytics: product_view, add_to_cart, checkout_start, payment_success, download
+model Event {
+  id        String   @id @default(cuid())
+  type      String
+  productId String?  @map("product_id")
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  sessionId String?  @map("session_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([type, createdAt])
+  @@map("events")
+}
+
+model EmailLog {
+  id        String   @id @default(cuid())
+  to        String
+  subject   String
+  html      String
+  // logged (no SMTP configured) | sent | failed
+  status    String
+  error     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("email_logs")
+}
+
+// One-time links that sign a customer in to see their orders
+model LoginToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique @map("token_hash")
+  userId    String    @map("user_id")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@map("login_tokens")
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("contact_messages")
+}
