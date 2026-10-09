@@ -10,6 +10,7 @@ import { useCart } from "@/lib/client/cart";
 const LINKS = [
   { href: "/free-resources", label: "Free Resources" },
   { href: "/bundles", label: "Bundles" },
+  { href: "/grown-ups", label: "Grown-up Reads" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];

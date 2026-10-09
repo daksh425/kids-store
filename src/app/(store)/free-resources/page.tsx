@@ -16,9 +16,9 @@ export default async function FreeResourcesPage() {
         <p className="chip bg-white text-[#8A6400] shadow-card">
           <Gift size={16} /> 100% free
         </p>
-        <h1 className="mt-4 font-display text-4xl font-bold sm:text-5xl">Free printables</h1>
+        <h1 className="mt-4 font-display text-4xl font-bold sm:text-5xl">Freebies to get growing</h1>
         <p className="mt-2 max-w-2xl text-lg text-muted">
-          Try our activities before you buy. Pick a freebie, enter your email, and download it straight away.
+          Not sure where to start? Try one on us. Pick a freebie, tell us where to send it, and you&apos;ll be printing in a minute.
         </p>
         <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-bold">
           <li className="flex items-center gap-2">

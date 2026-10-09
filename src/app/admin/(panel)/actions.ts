@@ -4,7 +4,7 @@ import { randomBytes } from "node:crypto";
 import { refresh, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { AGE_GROUPS, CATEGORIES } from "@/lib/catalog";
+import { ALL_AGE_GROUPS, ALL_CATEGORIES } from "@/lib/catalog";
 import { db } from "@/lib/db";
 import { sendOrderConfirmation } from "@/lib/email";
 import { slugify } from "@/lib/format";
@@ -28,8 +28,8 @@ const ProductInput = z
     slug: z.string().trim().max(80).optional(),
     shortDescription: z.string().trim().max(200).default(""),
     description: z.string().trim().min(10, "Add a description (at least a sentence)."),
-    category: z.enum(CATEGORIES.map((c) => c.slug) as [string, ...string[]]),
-    ageGroup: z.enum(AGE_GROUPS.map((a) => a.slug) as [string, ...string[]]),
+    category: z.enum(ALL_CATEGORIES.map((c) => c.slug) as [string, ...string[]]),
+    ageGroup: z.enum(ALL_AGE_GROUPS.map((a) => a.slug) as [string, ...string[]]),
     price: z.coerce.number().int("Price must be whole rupees.").min(0),
     discountPrice: optionalInt,
     pages: optionalInt,
@@ -66,18 +66,22 @@ export async function saveProduct(_prev: ProductFormState, form: FormData): Prom
 
   const pdf = fileFrom(form, "file");
   const thumb = fileFrom(form, "thumbnail");
+  const sample = fileFrom(form, "sample");
   if (d.status === "PUBLISHED" && !pdf && !existing?.file) {
     return { error: "Upload the product file before publishing (or save as a draft)." };
   }
 
   let fileFields = {};
   let thumbFields = {};
+  let sampleFields = {};
   try {
     if (pdf) {
       const saved = await saveProductFile(pdf);
       fileFields = { file: saved.name, fileName: saved.originalName, fileSize: saved.size };
     }
     if (thumb) thumbFields = { thumbnail: (await saveThumbnail(thumb)).name };
+    if (sample) sampleFields = { sampleFile: (await saveProductFile(sample)).name };
+    if (form.get("removeSample") === "on") sampleFields = { sampleFile: null };
   } catch (err) {
     return { error: err instanceof Error ? err.message : "Upload failed." };
   }
@@ -101,6 +105,7 @@ export async function saveProduct(_prev: ProductFormState, form: FormData): Prom
     status: d.status,
     ...fileFields,
     ...thumbFields,
+    ...sampleFields,
   };
 
   if (existing) await db.product.update({ where: { id: existing.id }, data });

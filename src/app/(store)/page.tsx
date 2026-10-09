@@ -1,8 +1,8 @@
-import { ArrowRight, Download, Gift, GraduationCap, Heart, Lightbulb, Printer, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, Gift, GraduationCap, Heart, Printer, Repeat, ShieldCheck, Sprout, Timer } from "lucide-react";
 import Link from "next/link";
 import { CategoryIcon } from "@/components/icons";
 import { ProductGrid } from "@/components/product-card";
-import { CATEGORIES } from "@/lib/catalog";
+import { CATEGORIES, KIDS_CATEGORY_SLUGS, STORE_NAME } from "@/lib/catalog";
 import { db } from "@/lib/db";
 import { thumbnailUrl } from "@/lib/media";
 import { bestSellers, categoryCounts, newArrivals } from "@/lib/products";
@@ -24,29 +24,29 @@ function SectionHeading({ eyebrow, title, href, linkLabel }: { eyebrow?: string;
 }
 
 const TRUST = [
-  { icon: Zap, label: "Instant Download", color: "#D02B65" },
-  { icon: Printer, label: "Printable Fun", color: "#4DA3FF" },
-  { icon: ShieldCheck, label: "Secure Payment", color: "#1D7A58" },
-  { icon: Lightbulb, label: "Learning Focused", color: "#B8392A" },
+  { icon: Timer, label: "Ready in a minute", color: "#D02B65" },
+  { icon: Printer, label: "Print again & again", color: "#1F65B8" },
+  { icon: ShieldCheck, label: "Safe, secure checkout", color: "#1D7A58" },
+  { icon: Sprout, label: "Grows with your child", color: "#B8392A" },
 ];
 
 const REASONS = [
   {
-    icon: Download,
-    title: "Instant access",
-    body: "Pay and download in seconds. No shipping, no waiting: start an activity the moment you need one.",
+    icon: Timer,
+    title: "Ready before the kettle boils",
+    body: "Pay, download, print. Your next activity is a minute away: no shipping, no waiting, no \"are we there yet?\"",
     tint: "bg-primary-50 text-primary",
   },
   {
-    icon: Printer,
-    title: "Print again and again",
-    body: "Every purchase is a printable PDF. Print a fresh copy for each child, each week, or each rainy afternoon.",
+    icon: Repeat,
+    title: "Yours to print, again and again",
+    body: "Every purchase is a PDF you keep. Print a fresh copy for each child, each week, or every rainy afternoon. Or flip through it on screen like a real book.",
     tint: "bg-secondary-50 text-[#1F65B8]",
   },
   {
     icon: GraduationCap,
-    title: "Made for their age",
-    body: "Everything is grouped by age, from first shapes at 2 to brain teasers at 10, so it's never too easy or too hard.",
+    title: "Just right for their age",
+    body: "Every printable is sorted by age, from first shapes at 2 to brain teasers at 12, so it's never too easy and never too hard.",
     tint: "bg-mint-50 text-mint-ink",
   },
 ];
@@ -56,7 +56,7 @@ export default async function HomePage() {
     bestSellers({ limit: 8 }),
     newArrivals(4),
     categoryCounts(),
-    db.product.findFirst({ where: { status: "PUBLISHED", price: 0 }, orderBy: [{ featured: "desc" }, { createdAt: "desc" }] }),
+    db.product.findFirst({ where: { status: "PUBLISHED", price: 0, category: { in: KIDS_CATEGORY_SLUGS } }, orderBy: [{ featured: "desc" }, { createdAt: "desc" }] }),
   ]);
   const heroCovers = best.slice(0, 3);
 
@@ -69,21 +69,21 @@ export default async function HomePage() {
         <div className="container-page relative grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-[1.1fr_1fr] lg:py-20">
           <div>
             <p className="chip bg-white text-primary shadow-card">
-              <Sparkles size={16} /> Printable resources for ages 2–12
+              <Sprout size={16} /> Printables for curious kids, ages 2–12
             </p>
             <h1 className="mt-5 font-display text-5xl leading-[1.05] font-bold sm:text-6xl lg:text-7xl">
-              Learning <span className="relative whitespace-nowrap text-primary">Made Fun<svg aria-hidden="true" viewBox="0 0 300 20" className="absolute -bottom-2 left-0 w-full" preserveAspectRatio="none"><path d="M3 14 C 80 4, 200 4, 297 12" stroke="#FFD95A" strokeWidth="8" fill="none" strokeLinecap="round" /></svg></span>
+              Watch little minds <span className="relative whitespace-nowrap text-primary">bloom<svg aria-hidden="true" viewBox="0 0 300 20" className="absolute -bottom-2 left-0 w-full" preserveAspectRatio="none"><path d="M3 14 C 80 4, 200 4, 297 12" stroke="#FFD95A" strokeWidth="8" fill="none" strokeLinecap="round" /></svg></span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted sm:text-xl">
-              Story e-books, colouring pages, activity books and worksheets that kids love and parents trust. Pay once,
-              download instantly, print as often as you like.
+              Stories to read together, pages to colour, puzzles to crack and worksheets that build real skills. Download in
+              a minute, print at the kitchen table, and watch your little bud grow.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link href="/kids" className="btn btn-lg btn-primary">
-                Explore resources <ArrowRight size={20} />
+                Start exploring <ArrowRight size={20} />
               </Link>
               <Link href="/free-resources" className="btn btn-lg btn-sunny">
-                <Gift size={20} /> Free resources
+                <Gift size={20} /> Try a freebie
               </Link>
             </div>
           </div>
@@ -108,7 +108,7 @@ export default async function HomePage() {
               ) : null;
             })}
             <div className="absolute bottom-0 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold whitespace-nowrap shadow-card">
-              <Heart size={16} className="fill-coral text-coral" /> Printable at home, any time
+              <Heart size={16} className="fill-coral text-coral" /> Loved at kitchen tables everywhere
             </div>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default async function HomePage() {
 
       {/* Categories */}
       <section className="container-page pt-16">
-        <SectionHeading eyebrow="Shop by category" title="What are we learning today?" href="/kids" linkLabel="See everything" />
+        <SectionHeading eyebrow="Pick a patch" title="What will they explore today?" href="/kids" linkLabel="See everything" />
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
           {CATEGORIES.map((c) => (
             <Link
@@ -142,7 +142,7 @@ export default async function HomePage() {
               <span className="mt-4 font-display text-xl font-semibold">{c.short}</span>
               <span className="mt-1 text-sm leading-snug text-muted">{c.description}</span>
               <span className="mt-3 inline-flex items-center gap-1 text-sm font-extrabold" style={{ color: c.ink }}>
-                {counts[c.slug] ?? 0} resources <ArrowRight size={15} className="transition group-hover:translate-x-1" />
+                {counts[c.slug] ?? 0} printables <ArrowRight size={15} className="transition group-hover:translate-x-1" />
               </span>
             </Link>
           ))}
@@ -151,14 +151,14 @@ export default async function HomePage() {
 
       {/* Best sellers */}
       <section className="container-page pt-16">
-        <SectionHeading eyebrow="Parents' favourites" title="Best sellers" href="/kids?sort=popular" linkLabel="Shop all" />
+        <SectionHeading eyebrow="Family favourites" title="Most-loved printables" href="/kids?sort=popular" linkLabel="Shop all" />
         <ProductGrid products={best} />
       </section>
 
       {/* Why parents love us */}
       <section className="container-page pt-16">
         <div className="rounded-[2.5rem] bg-white p-6 shadow-card sm:p-10">
-          <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Why parents love us</h2>
+          <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">Why families grow with {STORE_NAME}</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {REASONS.map(({ icon: Icon, title, body, tint }) => (
               <div key={title} className="rounded-3xl bg-cream p-6">
@@ -175,7 +175,7 @@ export default async function HomePage() {
 
       {/* New arrivals */}
       <section className="container-page pt-16">
-        <SectionHeading eyebrow="Just added" title="New arrivals" href="/kids?sort=newest" linkLabel="See what's new" />
+        <SectionHeading eyebrow="Freshly sprouted" title="New on the shelf" href="/kids?sort=newest" linkLabel="See what's new" />
         <ProductGrid products={fresh} />
       </section>
 
@@ -188,16 +188,16 @@ export default async function HomePage() {
             <div className="relative grid items-center gap-8 md:grid-cols-[1.4fr_1fr]">
               <div>
                 <p className="chip bg-white/15 text-sunny">
-                  <Gift size={16} /> Free download
+                  <Gift size={16} /> On the house
                 </p>
-                <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Try us free: {freebie.title}</h2>
-                <p className="mt-3 max-w-lg text-lg text-white/85">{freebie.shortDescription} No payment needed, just your email so we can send you the link.</p>
+                <h2 className="mt-4 font-display text-3xl font-bold sm:text-4xl">Plant the first seed: {freebie.title}</h2>
+                <p className="mt-3 max-w-lg text-lg text-white/85">{freebie.shortDescription} It&apos;s free. Just tell us where to send it.</p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link href={`/product/${freebie.slug}`} className="btn btn-lg btn-sunny">
                     Get it free <ArrowRight size={20} />
                   </Link>
                   <Link href="/free-resources" className="btn btn-lg border-2 border-white/30 text-white hover:bg-white/10">
-                    All free resources
+                    More freebies
                   </Link>
                 </div>
               </div>

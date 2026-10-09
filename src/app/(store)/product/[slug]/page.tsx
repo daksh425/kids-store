@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { Price } from "@/components/price";
 import { ProductGrid } from "@/components/product-card";
 import { Stars } from "@/components/stars";
-import { ageLabel, getCategory } from "@/lib/catalog";
+import { ageLabel, getCategory, isAdultCategory, LANDING_PAGES } from "@/lib/catalog";
 import { appUrl, downloadPolicy } from "@/lib/config";
 import { findPurchase } from "@/lib/customer";
 import { formatBytes, formatDate } from "@/lib/format";
@@ -36,6 +36,8 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
   if (!product) notFound();
 
   const category = getCategory(product.category);
+  const adult = isAdultCategory(product.category);
+  const landing = LANDING_PAGES[product.slug];
   const [{ reviews, rating, count }, { related, bundles }] = await Promise.all([
     getProductReviews(product.id),
     relatedProducts(product),
@@ -71,16 +73,18 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
       />
       <ViewTracker productId={product.id} title={product.title} price={price} />
       <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1 text-sm font-bold text-muted">
-        <Link href="/kids" className="hover:text-primary">
-          Kids
+        <Link href={adult ? "/grown-ups" : "/kids"} className="hover:text-primary">
+          {adult ? "Grown-up Reads" : "Kids"}
         </Link>
         <ChevronRight size={14} />
-        {category ? (
-          <Link href={`/kids/${category.slug}`} className="hover:text-primary">
-            {category.short}
-          </Link>
+        {category && !adult ? (
+          <>
+            <Link href={`/kids/${category.slug}`} className="hover:text-primary">
+              {category.short}
+            </Link>
+            <ChevronRight size={14} />
+          </>
         ) : null}
-        <ChevronRight size={14} />
         <span className="text-navy">{product.title}</span>
       </nav>
 
@@ -99,7 +103,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
         <div>
           <div className="flex flex-wrap gap-2">
             {category ? (
-              <Link href={`/kids/${category.slug}`} className="chip" style={{ background: category.tint, color: category.ink }}>
+              <Link href={adult ? "/grown-ups" : `/kids/${category.slug}`} className="chip" style={{ background: category.tint, color: category.ink }}>
                 {category.name}
               </Link>
             ) : null}
@@ -112,6 +116,11 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
             </a>
           ) : null}
           <p className="mt-4 text-lg leading-relaxed text-muted">{product.shortDescription}</p>
+          {landing ? (
+            <Link href={landing} className="mt-3 inline-flex items-center gap-1.5 font-bold text-primary hover:underline">
+              Meet the characters, read the opening and more <ChevronRight size={16} />
+            </Link>
+          ) : null}
 
           <div className="card mt-6 p-5 sm:p-6">
             <Price price={product.price} discountPrice={product.discountPrice} size="lg" />
@@ -155,10 +164,12 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
                     <span>{line}</span>
                   </li>
                 ))}
-                <li className="flex items-start gap-2.5">
-                  <Printer size={20} className="mt-0.5 shrink-0 text-mint-ink" />
-                  <span>Print as many copies as you need for your family or classroom</span>
-                </li>
+                {adult ? null : (
+                  <li className="flex items-start gap-2.5">
+                    <Printer size={20} className="mt-0.5 shrink-0 text-mint-ink" />
+                    <span>Print as many copies as you need for your family or classroom</span>
+                  </li>
+                )}
               </ul>
             </section>
           ) : null}
@@ -167,7 +178,8 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
             <h2 className="font-display text-2xl font-semibold">About this resource</h2>
             <p className="mt-3 leading-relaxed whitespace-pre-line text-muted">{product.description}</p>
             <p className="mt-4 flex items-center gap-2 text-sm text-muted">
-              <FileText size={16} /> A4 PDF, works on any phone, tablet or computer, and prints on any home printer.
+              <FileText size={16} />{" "}
+              {adult ? "PDF e-book. Read it online as a page-turning book, or download it to any device." : "A4 PDF, works on any phone, tablet or computer, and prints on any home printer."}
             </p>
           </section>
 

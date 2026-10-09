@@ -1,6 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import type { Prisma } from "@/generated/prisma/client";
+import { ADULT_CATEGORY_SLUGS, KIDS_CATEGORY_SLUGS } from "./catalog";
 import { db } from "./db";
 import { effectivePrice } from "./pricing";
 
@@ -39,7 +40,15 @@ async function withRatings(rows: CardRow[]): Promise<ProductCardData[]> {
 
 export type ProductSort = "popular" | "newest" | "price-asc" | "price-desc";
 
+/** Kids pages must never show grown-up products, so every list is scoped to one audience. */
+export type Audience = "kids" | "adults";
+
+function audienceWhere(audience: Audience = "kids"): Prisma.ProductWhereInput {
+  return { category: { in: audience === "adults" ? ADULT_CATEGORY_SLUGS : KIDS_CATEGORY_SLUGS } };
+}
+
 export async function listProducts(opts: {
+  audience?: Audience;
   category?: string;
   ageGroup?: string;
   free?: boolean;
@@ -48,8 +57,8 @@ export async function listProducts(opts: {
   limit?: number;
   excludeId?: string;
 } = {}) {
-  const where: Prisma.ProductWhereInput = { status: "PUBLISHED" };
-  if (opts.category) where.category = opts.category;
+  const where: Prisma.ProductWhereInput = { status: "PUBLISHED", ...audienceWhere(opts.audience) };
+  if (opts.category) where.AND = [{ category: opts.category }];
   if (opts.ageGroup) where.ageGroup = opts.ageGroup;
   if (opts.free) where.price = 0;
   if (opts.paidOnly) where.price = { gt: 0 };
@@ -71,7 +80,7 @@ export async function listProducts(opts: {
 /** Ranked by paid sales, then the admin's "featured" flag, then newest. */
 export async function bestSellers(opts: { where?: Prisma.ProductWhereInput; limit?: number } = {}) {
   const rows = await db.product.findMany({
-    where: opts.where ?? { status: "PUBLISHED", price: { gt: 0 } },
+    where: opts.where ?? { status: "PUBLISHED", price: { gt: 0 }, ...audienceWhere("kids") },
     select: {
       ...cardSelect,
       _count: { select: { orderItems: { where: { order: { status: "PAID" } } } } },
@@ -89,7 +98,7 @@ export async function bestSellers(opts: { where?: Prisma.ProductWhereInput; limi
 
 export async function newArrivals(limit = 4) {
   const rows = await db.product.findMany({
-    where: { status: "PUBLISHED", price: { gt: 0 } },
+    where: { status: "PUBLISHED", price: { gt: 0 }, ...audienceWhere("kids") },
     orderBy: { createdAt: "desc" },
     take: limit,
     select: cardSelect,
@@ -128,7 +137,7 @@ export async function relatedProducts(p: { id: string; category: string; ageGrou
       take: 8,
       select: cardSelect,
     }),
-    p.category === "learning-packs"
+    p.category === "learning-packs" || ADULT_CATEGORY_SLUGS.includes(p.category as (typeof ADULT_CATEGORY_SLUGS)[number])
       ? Promise.resolve([])
       : db.product.findMany({
           where: { status: "PUBLISHED", category: "learning-packs", id: { not: p.id } },

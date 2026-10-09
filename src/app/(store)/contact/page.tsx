@@ -10,7 +10,7 @@ export default function ContactPage() {
       <div className="grid gap-8 lg:grid-cols-[1fr_1.4fr]">
         <div>
           <h1 className="font-display text-4xl font-bold sm:text-5xl">Contact us</h1>
-          <p className="mt-3 text-lg text-muted">Questions about a download, an order, or a resource you&apos;d like us to make? Send us a message.</p>
+          <p className="mt-3 text-lg text-muted">A download giving you trouble, an idea for a new printable, or just a hello? We read every message.</p>
           <ul className="mt-6 space-y-4">
             <li className="flex gap-3">
               <MessageCircle className="mt-0.5 shrink-0 text-primary" />

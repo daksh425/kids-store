@@ -13,7 +13,7 @@ export function Footer() {
             <span className="font-display text-xl font-bold">{STORE_NAME}</span>
           </div>
           <p className="mt-3 max-w-xs text-sm leading-relaxed">
-            Printable e-books, colouring, activities and worksheets that make learning at home feel like play.
+            Printable stories, colouring, puzzles and worksheets that help little minds bloom, one page at a time.
           </p>
           <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-white">
             <Lock size={14} /> Secure payments by Razorpay
@@ -32,6 +32,11 @@ export function Footer() {
             <li>
               <Link href="/free-resources" className="hover:text-sunny">
                 Free resources
+              </Link>
+            </li>
+            <li>
+              <Link href="/grown-ups" className="hover:text-sunny">
+                Grown-up Reads
               </Link>
             </li>
           </ul>
@@ -79,7 +84,7 @@ export function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="container-page py-5 text-xs text-white/60">
-          © {STORE_NAME}. Digital products for personal and classroom use.
+          © {STORE_NAME}. Made for curious kids and the grown-ups who cheer them on.
         </div>
       </div>
     </footer>

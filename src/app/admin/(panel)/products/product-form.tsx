@@ -2,7 +2,7 @@
 
 import { FileText, Save } from "lucide-react";
 import { useActionState, useState } from "react";
-import { AGE_GROUPS, CATEGORIES } from "@/lib/catalog";
+import { ALL_AGE_GROUPS, ALL_CATEGORIES } from "@/lib/catalog";
 import { formatBytes, slugify } from "@/lib/format";
 import { thumbnailUrl } from "@/lib/media";
 import { saveProduct, type ProductFormState } from "../actions";
@@ -26,6 +26,7 @@ export type ProductFormValues = {
   file: string | null;
   fileName: string | null;
   fileSize: number | null;
+  sampleFile?: string | null;
 };
 
 export function ProductForm({ product }: { product: ProductFormValues }) {
@@ -85,7 +86,7 @@ export function ProductForm({ product }: { product: ProductFormValues }) {
           <div>
             <label className="label" htmlFor="category">Category</label>
             <select id="category" name="category" className="field" defaultValue={product.category}>
-              {CATEGORIES.map((c) => (
+              {ALL_CATEGORIES.map((c) => (
                 <option key={c.slug} value={c.slug}>{c.name}</option>
               ))}
             </select>
@@ -93,7 +94,7 @@ export function ProductForm({ product }: { product: ProductFormValues }) {
           <div>
             <label className="label" htmlFor="ageGroup">Age group</label>
             <select id="ageGroup" name="ageGroup" className="field" defaultValue={product.ageGroup}>
-              {AGE_GROUPS.map((a) => (
+              {ALL_AGE_GROUPS.map((a) => (
                 <option key={a.slug} value={a.slug}>{a.label}</option>
               ))}
             </select>
@@ -150,6 +151,17 @@ export function ProductForm({ product }: { product: ProductFormValues }) {
           )}
           <input name="file" type="file" accept=".pdf,.zip,application/pdf,application/zip" className="block w-full text-sm file:mr-3 file:rounded-full file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:font-bold file:text-primary" />
           <p className="text-xs text-muted">Stored privately. Customers only get it through expiring download links.</p>
+        </div>
+
+        <div className="card space-y-3 p-5">
+          <p className="label !mb-0">Free sample PDF <span className="font-normal text-muted">(optional)</span></p>
+          <p className="text-xs text-muted">e.g. the first chapter. Anyone can read it as a book at /sample/{product.slug || "your-slug"}, no purchase needed.</p>
+          {product.sampleFile ? (
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" name="removeSample" className="size-4 accent-primary" /> Remove the current sample
+            </label>
+          ) : null}
+          <input name="sample" type="file" accept=".pdf,application/pdf" className="block w-full text-sm file:mr-3 file:rounded-full file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:font-bold file:text-primary" />
         </div>
 
         <div className="card space-y-3 p-5">

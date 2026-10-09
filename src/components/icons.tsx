@@ -14,18 +14,15 @@ export function CategoryIcon({ slug, ...props }: { slug: string } & LucideProps)
 }
 
 export function LogoMark({ className }: { className?: string }) {
+  // A bud on a stem: the "bright bud" of the name.
   return (
     <svg viewBox="0 0 40 40" className={className} aria-hidden="true">
       <circle cx="20" cy="20" r="20" fill="#D02B65" />
-      <path
-        d="M20 7.5l3.3 8.1 8.7.6-6.7 5.6 2.1 8.5L20 25.6l-7.4 4.7 2.1-8.5L8 16.2l8.7-.6z"
-        fill="#FFD95A"
-        stroke="#FFD95A"
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      <circle cx="31.5" cy="8.5" r="2.4" fill="#72D6B1" />
-      <circle cx="7.5" cy="30" r="1.8" fill="#FF7B6B" />
+      <path d="M20 31V19" stroke="#72D6B1" strokeWidth="2.6" strokeLinecap="round" />
+      <path d="M20 26c-5.5 0-8-3-8.5-6.5 4.5-.3 8 1.8 8.5 6.5Z" fill="#72D6B1" />
+      <path d="M20 23.5c5.2 0 7.6-2.8 8-6.2-4.3-.2-7.6 1.7-8 6.2Z" fill="#72D6B1" />
+      <path d="M20 8c3.6 2.4 5 5.6 4.2 8.6-.6 2.3-2.3 3.6-4.2 3.6s-3.6-1.3-4.2-3.6C15 13.6 16.4 10.4 20 8Z" fill="#FFD95A" />
+      <circle cx="31" cy="9" r="2.2" fill="#FFD95A" />
     </svg>
   );
 }

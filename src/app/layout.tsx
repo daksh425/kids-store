@@ -10,9 +10,9 @@ const nunito = Nunito({ variable: "--font-nunito", subsets: ["latin"] });
 export const metadata: Metadata = {
   // Absolute URLs for social previews and canonical links.
   metadataBase: new URL(process.env.APP_URL || "http://localhost:3100"),
-  title: { default: `${STORE_NAME}: printable learning fun for kids`, template: `%s · ${STORE_NAME}` },
+  title: { default: `${STORE_NAME}: printables that help little minds bloom`, template: `%s · ${STORE_NAME}` },
   description:
-    "Printable kids e-books, colouring books, activity books, worksheets and learning packs. Instant download, secure payment, made for ages 2–12.",
+    "Story e-books, colouring books, activity books, worksheets and learning packs for ages 2–12. Download in a minute, print at home, and watch them grow.",
   openGraph: { siteName: STORE_NAME, type: "website", locale: "en_IN" },
 };
 

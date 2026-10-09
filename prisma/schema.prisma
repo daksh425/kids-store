@@ -45,6 +45,8 @@ model Product {
   file             String?
   fileName         String?       @map("file_name")
   fileSize         Int?          @map("file_size")
+  // Optional free preview (e.g. first chapter), readable without buying
+  sampleFile       String?       @map("sample_file")
   pages            Int?
   format           String        @default("PDF")
   includes         String[]      @default([])

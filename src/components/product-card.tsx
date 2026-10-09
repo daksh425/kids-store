@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ageLabel, getCategory } from "@/lib/catalog";
+import { ageLabel, getCategory, isAdultCategory, LANDING_PAGES } from "@/lib/catalog";
 import { thumbnailUrl } from "@/lib/media";
 import { effectivePrice } from "@/lib/pricing";
 import type { ProductCardData } from "@/lib/products";
@@ -10,7 +10,8 @@ import { Stars } from "./stars";
 export function ProductCard({ product }: { product: ProductCardData }) {
   const category = getCategory(product.category);
   const thumb = thumbnailUrl(product.thumbnail);
-  const href = `/product/${product.slug}`;
+  const href = LANDING_PAGES[product.slug] ?? `/product/${product.slug}`;
+  const adult = isAdultCategory(product.category);
   const free = effectivePrice(product) === 0;
 
   return (
@@ -42,7 +43,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
               <span>({product.reviewCount})</span>
             </>
           ) : (
-            <span>{product.pages ? `${product.pages} printable pages` : "Printable PDF"}</span>
+            <span>{product.pages ? `${product.pages} ${adult ? "pages" : "printable pages"}` : "Printable PDF"}</span>
           )}
         </div>
         <div className="mt-auto pt-1">

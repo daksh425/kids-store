@@ -10,7 +10,10 @@ type Props = {
   src: string;
   title: string;
   backHref: string;
+  backLabel?: string;
   downloadHref: string | null;
+  /** Extra button in the top bar, e.g. "Buy the full book" on a free sample */
+  action?: { href: string; label: string };
 };
 
 type Phase = { kind: "loading"; done: number; total: number } | { kind: "ready" } | { kind: "error"; message: string };
@@ -25,7 +28,7 @@ const CHROME_HEIGHT = 150;
  * Front and back covers are stiff; inner pages bend. Phones and narrow windows
  * get one page at a time.
  */
-export function FlipBook({ src, title, backHref, downloadHref }: Props) {
+export function FlipBook({ src, title, backHref, backLabel = "My order", downloadHref, action }: Props) {
   const roomRef = useRef<HTMLDivElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
   const flipRef = useRef<PageFlip | null>(null);
@@ -161,10 +164,14 @@ export function FlipBook({ src, title, backHref, downloadHref }: Props) {
     <div ref={roomRef} className="flex min-h-screen flex-col bg-[radial-gradient(ellipse_at_center,#3a3354_0%,#1d1a2b_70%)] text-white">
       <header className="flex items-center gap-3 px-4 py-3 sm:px-6">
         <Link href={backHref} className="btn btn-sm border border-white/20 text-white hover:bg-white/10">
-          <ArrowLeft size={16} /> <span className="hidden sm:inline">My order</span>
+          <ArrowLeft size={16} /> <span className="hidden sm:inline">{backLabel}</span>
         </Link>
         <h1 className="min-w-0 flex-1 truncate text-center font-display text-lg font-semibold sm:text-xl">{title}</h1>
-        {downloadHref ? (
+        {action ? (
+          <Link href={action.href} className="btn btn-sm btn-sunny">
+            {action.label}
+          </Link>
+        ) : downloadHref ? (
           <a href={downloadHref} className="btn btn-sm btn-sunny">
             <Download size={16} /> <span className="hidden sm:inline">Download PDF</span>
           </a>

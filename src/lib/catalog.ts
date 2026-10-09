@@ -1,6 +1,10 @@
 // Fixed store taxonomy. Products store the slugs; names and colours live here.
+//
+// CATEGORIES and AGE_GROUPS are the kids store. Grown-up products live in
+// separate lists so nothing written for adults can surface on a kids page;
+// the ALL_* lists are for admin and lookups only.
 
-export type CategorySlug = "ebooks" | "colouring" | "activities" | "worksheets" | "learning-packs";
+export type CategorySlug = "ebooks" | "colouring" | "activities" | "worksheets" | "learning-packs" | "grown-up-reads";
 
 export type Category = {
   slug: CategorySlug;
@@ -71,16 +75,44 @@ export const AGE_GROUPS = [
   { slug: "10-12", label: "Ages 10–12" },
 ] as const;
 
+export const ADULT_CATEGORIES: Category[] = [
+  {
+    slug: "grown-up-reads",
+    name: "Grown-up Reads",
+    short: "Grown-up Reads",
+    description: "Novels and novellas for the grown-ups, after the kids are asleep",
+    color: "#2E1A47",
+    tint: "#F1ECF6",
+    ink: "#4A2C6E",
+  },
+];
+
+export const ALL_CATEGORIES: Category[] = [...CATEGORIES, ...ADULT_CATEGORIES];
+export const KIDS_CATEGORY_SLUGS = CATEGORIES.map((c) => c.slug);
+export const ADULT_CATEGORY_SLUGS = ADULT_CATEGORIES.map((c) => c.slug);
+
+export const ADULT_AGE_GROUPS = [{ slug: "adult", label: "Adults 18+" }] as const;
+export const ALL_AGE_GROUPS = [...AGE_GROUPS, ...ADULT_AGE_GROUPS];
+
 export function getCategory(slug: string) {
-  return CATEGORIES.find((c) => c.slug === slug);
+  return ALL_CATEGORIES.find((c) => c.slug === slug);
+}
+
+export function isAdultCategory(slug: string) {
+  return ADULT_CATEGORY_SLUGS.includes(slug as CategorySlug);
 }
 
 export function ageLabel(slug: string) {
-  return AGE_GROUPS.find((a) => a.slug === slug)?.label ?? slug;
+  return ALL_AGE_GROUPS.find((a) => a.slug === slug)?.label ?? slug;
 }
 
 export function isCategorySlug(slug: string): slug is CategorySlug {
-  return CATEGORIES.some((c) => c.slug === slug);
+  return ALL_CATEGORIES.some((c) => c.slug === slug);
 }
 
-export const STORE_NAME = process.env.NEXT_PUBLIC_STORE_NAME || "Printora";
+/** Products with their own marketing landing page instead of the standard product page. */
+export const LANDING_PAGES: Record<string, string> = {
+  "billionaire-fake-fiancee": "/grown-ups/billionaire-fake-fiancee",
+};
+
+export const STORE_NAME = process.env.NEXT_PUBLIC_STORE_NAME || "BrightBuds";

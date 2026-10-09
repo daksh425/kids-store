@@ -8,8 +8,8 @@ export default function NotFound() {
       <Header />
       <main className="container-page flex flex-1 flex-col items-center py-24 text-center">
         <p className="font-display text-8xl font-bold text-primary">404</p>
-        <h1 className="mt-4 font-display text-3xl font-bold">Oops, this page went out to play</h1>
-        <p className="mt-2 text-muted">We couldn&apos;t find what you were looking for.</p>
+        <h1 className="mt-4 font-display text-3xl font-bold">This page hasn&apos;t sprouted yet</h1>
+        <p className="mt-2 text-muted">Let&apos;s get you back to the garden.</p>
         <div className="mt-6 flex gap-3">
           <Link href="/" className="btn btn-primary">Go home</Link>
           <Link href="/kids" className="btn btn-outline">Browse resources</Link>

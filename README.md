@@ -1,4 +1,4 @@
-# Printora: digital printables store (starting with kids)
+# BrightBuds: printables that help little minds bloom
 
 An MVP of the "Kids Digital Products Platform" plan: a store for printable kids e-books, colouring books, activity books,
 worksheets and learning packs, with Razorpay payments, secure downloads and an admin dashboard.
@@ -54,6 +54,20 @@ HMAC signature check passes (`/api/checkout/verify` or the webhook).
    they request a one-time email sign-in link.
 
 Free resources (price ₹0) use the same checkout, minus payment, so every freebie builds your email list.
+
+## Grown-up Reads (novels)
+
+A separate section at `/grown-ups`, kept out of every kids page, menu and listing. Its first title is
+**Billionaire Fake Fiancée**, with its own landing page at `/grown-ups/billionaire-fake-fiancee` and a free Chapter One
+reader at `/sample/billionaire-fake-fiancee`.
+
+- Manuscript: `prisma/seed/books/billionaire-fake-fiancee/*.md` (one file per chapter; `*italic*`, `**bold**`, `* * *`).
+- Typesetter: `prisma/seed/book/typeset.ts` builds the 6×9" book (cover, front matter, contents, chapters, back cover)
+  and the free sample. `npm run db:seed` regenerates both after you edit the text.
+- Fonts: `prisma/seed/fonts` (Libre Baskerville, Abril Fatface, Great Vibes; SIL Open Font License, licences included).
+- Store cover image: `prisma/seed/assets/billionaire-fake-fiancee-cover.jpg`, a render of page 1. Re-render it if you
+  change the cover design.
+- Landing page copy (characters, tropes, FAQs): `src/content/billionaire-fake-fiancee.ts`.
 
 ## Admin
 

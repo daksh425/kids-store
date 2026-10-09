@@ -20,9 +20,9 @@ export default async function BundlesPage() {
           <PiggyBank size={32} />
         </span>
         <div>
-          <h1 className="font-display text-4xl font-bold sm:text-5xl">Bundle &amp; save</h1>
+          <h1 className="font-display text-4xl font-bold sm:text-5xl">Bigger bundles, bigger smiles</h1>
           <p className="mt-2 max-w-2xl text-lg text-white/85">
-            Learning packs bring together activities, worksheets and colouring for one age group in a single download
+            Each learning pack gathers a whole season of stories, worksheets and colouring for one age group into a single download
             {bestSaving > 0 ? `, saving up to ${inr(bestSaving)}` : ""}.
           </p>
         </div>

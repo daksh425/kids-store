@@ -10,6 +10,7 @@ import { PrismaClient } from "../src/generated/prisma/client";
 import { ageLabel, CATEGORIES, STORE_NAME } from "../src/lib/catalog";
 import { coverSvg } from "./seed/cover";
 import { cover, createKit, finishDocument } from "./seed/pdf-kit";
+import { seedBooks } from "./seed/novels";
 import { SEED_PRODUCTS } from "./seed/products";
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
@@ -74,6 +75,9 @@ async function main() {
     });
     console.log(`  ✓ ${p.title} (${pages} pages, ${Math.round(pdf.byteLength / 1024)} KB)`);
   }
+
+  // Grown-up Reads: typeset novels
+  await seedBooks(db);
 
   const coupons = [
     { code: "WELCOME10", type: "PERCENT" as const, value: 10, minOrder: 0 },

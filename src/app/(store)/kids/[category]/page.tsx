@@ -2,19 +2,22 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CategoryIcon } from "@/components/icons";
 import { CatalogView, parseCatalogParams } from "@/components/store/catalog-view";
-import { CATEGORIES, getCategory } from "@/lib/catalog";
+import { CATEGORIES } from "@/lib/catalog";
+
+// Kids categories only: grown-up categories never resolve under /kids.
+const kidsCategory = (slug: string) => CATEGORIES.find((c) => c.slug === slug);
 
 export function generateStaticParams() {
   return CATEGORIES.map((c) => ({ category: c.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/kids/[category]">): Promise<Metadata> {
-  const category = getCategory((await params).category);
+  const category = kidsCategory((await params).category);
   return category ? { title: category.name, description: category.description } : {};
 }
 
 export default async function CategoryPage({ params, searchParams }: PageProps<"/kids/[category]">) {
-  const category = getCategory((await params).category);
+  const category = kidsCategory((await params).category);
   if (!category) notFound();
   const { age, sort } = parseCatalogParams(await searchParams);
 
